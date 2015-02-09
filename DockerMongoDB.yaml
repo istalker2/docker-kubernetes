@@ -20,14 +20,10 @@ Workflow:
 
   deploy:
     Body:
-      - $._environment: $.find(std:Environment).require()
       - If: not $.getAttr(deployed, false)
         Then:
-          - $._environment.reporter.report($this, 'Checking for Docker Service availability')
-          - $.host.deploy()
-
           - $._environment.reporter.report($this, 'Installing Application')
-          - $.bindings: $.host.hostContainer(
+          - $.host.hostContainer(
                 name => $.name,
                 image => mongo,
                 commands => null,
@@ -35,10 +31,7 @@ Workflow:
                 ports => list($ports),
                 volumes => dict()
               )
+          - $.host.deploy()
           
-          - $port: str($.port)
-          - $._environment.reporter.report($this, 'Application MongoDB available at {0}:{1}'.format(
-                $.docker.publicIp,
-                $.bindings.get($port)
-              ))
+          - $._environment.reporter.report($this, 'Application MongoDB available at {0}:{1}'.format($.host.getIp(), $.port))
           - $.setAttr(deployed, true)
