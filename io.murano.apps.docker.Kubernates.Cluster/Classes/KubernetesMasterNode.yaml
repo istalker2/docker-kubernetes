@@ -1,5 +1,11 @@
+Namespaces:
+  =: io.murano.apps.docker
+  std: io.murano
+  res: io.murano.resources
+  sys: io.murano.system
 
 Name: KubernetesMasterNode
+
 Extends: KubernetesNode
 
 Properties:
@@ -24,7 +30,6 @@ Methods:
   
   setupNode:
     Body:
-      - configure security group ports for master node
       - $._environment.reporter.report($, 'Configuring ETCD muster node')
       - $resources: new(sys:Resources)
       - $template: $resources.yaml('MasterEtcdSetup.template').bind(dict(
