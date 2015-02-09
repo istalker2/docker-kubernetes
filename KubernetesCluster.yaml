@@ -4,12 +4,11 @@ Extends: std:Application
 
 Properties:
   masterNode:
-    Contract: $.class(res:Instance)
-    Usage: Out
+    Contract: $.class(KubernetesMasterNode)
 
   minionNodes:
     Contract:
-      - $.class(KubernetesNode).notNull()
+      - $.class(KubernetesMinionNode).notNull()
       
 Methods:
   initialize:
