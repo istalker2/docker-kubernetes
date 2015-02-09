@@ -11,7 +11,7 @@ Properties:
     Contract: $.int()
 
 
-Workflow:
+Methods:
   initialize:
     Body:
       - $._environment: $.find(std:Environment).require()
