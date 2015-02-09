@@ -1,4 +1,11 @@
+Namespaces:
+  =: io.murano.apps.docker
+  std: io.murano
+  res: io.murano.resources
+  sys: io.murano.system
+
 Name: KubernetesMinionNode
+
 Extends: KubernetesNode
 
 Methods:
@@ -18,7 +25,6 @@ Methods:
 
   setupNode:
     Body:
-      - configure security group ports for minion node
       - $._environment.reporter.report($, 'Configuring ETCD node {0}'.format($.instance.name))
       - $resources: new(sys:Resources)
       - $template: $resources.yaml('EtcdAddMember.template').bind(dict(

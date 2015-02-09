@@ -1,3 +1,9 @@
+Namespaces:
+  =: io.murano.apps.docker
+  std: io.murano
+  res: io.murano.resources
+  sys: io.murano.system
+
 Name: KubernetesNode
 
 Properties:
