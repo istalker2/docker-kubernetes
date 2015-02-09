@@ -9,9 +9,7 @@ Properties:
     Contract: $.class(DockerContainerHost).notNull()
   port:
     Contract: $.int()
-  bindings:
-    Contract: {}
-    Usage: Out
+
 
 Workflow:
   initialize:
