@@ -115,7 +115,7 @@ Methods:
       - $template: $resources.yaml('DestroyService.template').bind(dict(serviceId => $id))
       - $.kubernetesCluster.masterNode.instance.agent.call($template, $resources)
 
-  deployReplicationController
+  deployReplicationController:
     Body:
       - $definition: $.buildReplicationControllerDefinition()
       - $isNew: $.getAttr(replicationFactor, 0) = 0
