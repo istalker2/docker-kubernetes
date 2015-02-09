@@ -1,0 +1,283 @@
+Name: KubernetesPod
+Extends: 
+  - DockerContainerHost
+  - DockerHelpers
+
+Properties:
+  kubernetesCluster:
+    Contract: $.class(KubernetesCluster).notNull()
+
+  labels:
+    Contract: $string().notNull()  # convert to key-value map as soon as it will be possible to input it in UI
+
+  replicationFactor:
+    Contract: $.int().notNull()
+
+  exposePorts:
+    Contract: 
+      $.int().notNull(): $.int().notNull()
+
+Methods:
+  initialize:
+    Body:
+      - $._environment: $.find(std:Environment).require()
+
+      - $podName: $.getPodName()
+      - $podDefinition: $.getAttr(podDefinition, null)
+      - If: $podDefinition = null
+        Then:
+          - $podDefinition:
+              id: $podName
+              kind: Pod
+              apiVersion: v1beta1
+              desiredState:
+                manifest:
+                  version: v1beta1
+                  id: $podName
+                containers: []
+                volumes: []
+              labels: $.getPodLabels()
+                
+          - $.setAttr(podDefinition, $podDefinition)
+      - $._podDefinition: $podDefinition
+
+  deploy:
+    Body:
+      - $.kubernetesCluster.deploy()
+      - $lastPodDeployId: $.getAttr(lastPodDeployId, null)
+      - $lastPodChangeId: $.getAttr(lastPodChangeId, null)
+      - If: $lastPodDeployId != $lastPodChangeId
+        Then: 
+          - $.deployPod()
+          - $.setAttr(lastPodDeployId, $lastPodChangeId)
+
+      - $previouslyExposedPorts: $.getAttr(exposedPorts, dict())
+      - For: mapping
+        In: $.previouslyExposedPorts.where(not $ in $this.exposePorts)
+        Do: $.destroyService(servicePort => $mapping)
+
+      - For: mapping
+        In: $.exposePorts
+        Do:
+          - $previousMapping: $previouslyExposedPorts.get($mapping)
+          - If: $previousMapping != $.exposePorts.get(mapping)
+            Then: $.deployService(servicePort => $mapping, containerPort => $.exposePorts.get(mapping), 
+                isNew => $previousMapping = null)
+      - $.setAttr(exposedPorts, $.exposePorts)
+
+      - $previousReplicationFactor: $.getAttr(replicationFactor, 0)
+      - If: $previousReplicationFactor != $.replicationFactor
+        Then:
+          - If: $.replicationFactor > 0
+            Then: $.deployReplicationController()
+            Else: $.destroyReplicationController()
+          - $.setAttr(replicationFactor, $.replicationFactor)
+              
+  deployPod:
+    Body:
+      - $isNew: $.getAttr(lastPodDeployId, null) = null
+      - $resources: new(sys:Resources)
+      - $template: $resources.yaml('UpdatePod.template').bind(dict(
+            podDefinition => $._podDefinition,
+            isNew => $isNew
+          ))
+      - $.kubernetesCluster.masterNode.instance.agent.call($template, $resources)
+
+  deployService:
+    Arguments:
+      - servicePort:
+          Contract: $int().notNull()
+      - containerPort:
+          Contract: $int().notNull()
+      - isNew:
+          Contract: $.bool().notNull()
+    Body:
+      - $definition: $.buildServiceDefinition(servicePort => $servicePort, containerPort => containerPort)
+      - $isNew: $.getAttr(lastPodDeployId, null) = null
+      - $resources: new(sys:Resources)
+      
+      #TODO: write UpdateService.template that is exactly the same as UpdatePod.template with just a parameter name changed
+      - $template: $resources.yaml('UpdateService.template').bind(dict(
+            serviceDefinition => $._podDefinition,
+            isNew => $isNew
+          ))
+      - $.kubernetesCluster.masterNode.instance.agent.call($template, $resources)
+
+  destroyService:
+    Arguments:
+      - servicePort:
+          Contract: $int().notNull()
+    Body:
+      - $id: $.getServiceId($servicePort)
+      - $resources: new(sys:Resources)
+      
+      #TODO: write DestroyService.template that calls "kubectl delete service $id"
+      - $template: $resources.yaml('DestroyService.template').bind(dict(serviceId => $id))
+      - $.kubernetesCluster.masterNode.instance.agent.call($template, $resources)
+
+  deployReplicationController
+    Body:
+      - $definition: $.buildReplicationControllerDefinition()
+      - $isNew: $.getAttr(replicationFactor, 0) = 0
+      - $resources: new(sys:Resources)
+      
+      #TODO: write UpdateReplicationController.template that is exactly the same as UpdatePod.template with just a parameter name changed
+      - $template: $resources.yaml('UpdateReplicationController.template').bind(dict(
+            controllerDefinition => $definition,
+            isNew => $isNew
+          ))
+      - $.kubernetesCluster.masterNode.instance.agent.call($template, $resources)
+
+  destroyReplicationController:
+    Body:
+      - $id: $.getReplicationControllerId()
+      - $resources: new(sys:Resources)
+      
+      #TODO: write DestroyReplicationController.template that calls "kubectl delete rc $id" (not 100% sure for "rc")
+      - $template: $resources.yaml('DestroyReplicationController.template').bind(dict(serviceId => $id))
+      - $.kubernetesCluster.masterNode.instance.agent.call($template, $resources)
+
+  getPodName:
+    Body:
+      - $name: $.getAttr(podName, null)
+      - If: $name = null
+        Then:
+          - $name: format('Pod-{0}', randomName())
+          - $.setAttr(podName, $name)
+      - Return: $name
+
+  getPodLabels:
+    Body:
+      Return: $.labels2Map($.labels).mergeWith(dict(id => $podName))
+
+  getReplicationControllerId:
+    Body:
+      - Return: format('ReplicationController-{0}', $.id())
+
+  getServiceId:
+    Arguments:
+      - servicePort:
+    Body:
+      - Return: format('Service-{0}-{1}', $servicePort, $.id())
+
+  buildServiceDefinition:
+    Arguments:
+      - servicePort:
+          Contract: $int().notNull()
+      - containerPort:
+          Contract: $int().notNull()
+    Body:
+      - Return:
+          id: $.getServiceId($servicePort)
+          kind: Service
+          apiVersion: v1beta1
+          port: $servicePort
+          containerPort: $containerPort
+          selector:
+            id: $.getPodName()
+
+  buildReplicationControllerDefinition:
+    Body:
+      Return:
+        id: $.getReplicationControllerId()
+        kind: ReplicationController
+        apiVersion: v1beta1
+        desiredState:
+          replicas: $.replicationFactor
+          replicaSelector:
+            id: $.getPodName()
+          podTemplate:
+            desiredState: $._podDefinition.desiredState
+            labels: $._podDefinition.labels
+
+  deleteContainer:
+    Arguments:
+      - name:
+          Contract: $.string().notNull()
+    Body:
+      - $lenBefore: len($._podDefinition.desiredState.manifest.containers) + len($._podDefinition.desiredState.manifest.volumes)
+      - $newContainers: $._podDefinition.desiredState.manifest.containers.where($.name != $name)
+      - $newVolumes: $._podDefinition.desiredState.manifest.volumes.where(
+            $.name in $._podDefinition.desiredState.manifest.containers.volumeMounts.name)
+      - If: len($newContainers) + len($newVolumes) != $lenBefore
+        Then:
+          - $._podDefinition.desiredState.manifest.containers: $newContainers
+          - $._podDefinition.desiredState.manifest.volumes: $newVolumes
+          - $.setAttr(lastPodChangeId, randomName())
+          - $.setAttr(podDefinition, $._podDefinition)
+ 
+  hostContainer:
+    Arguments:
+      - name:
+          Contract: $.string().notNull()
+      - image:
+          Contract: $.string().notNull()
+      - commands:
+          Contract: 
+            - $.string().notNull()
+      - env:
+          Contract:
+            $.string().notNull(): $.string().notNull()
+      - ports:
+          Contract: 
+            - $.int()
+      - volumes:
+          Contract:
+            $.string().notNull(): $.class(DockerVolume).notNull()
+    Body:
+      - $.deleteContainer($name)
+      - $container:
+          name: $name
+          image: $image
+          command: $commands
+          cpu: 1000
+          ports: $ports.select(dict(containerPort => $))
+          volumeMounts: $volumes.select(dict(name => $this.generateVolumeName($env.get($)), mountPath => $))
+          env: $env.select(dict(key => $, value => $env.get($)))
+      
+      - $newVolumes: $volumes.where(not $this.generateVolumeName($) in $._podDefinition.desiredState.volumes.name).
+          select($this.buildVolumeEntry($volumes.get($)))
+
+      - $diff:
+          desiredState:
+            manifest:
+              containers: $container
+              volumes: $newVolumes
+      
+      - $.setAttr(lastPodChangeId, randomName())
+      - $._podDefinition: $._podDefinition.mergeWith($diff)
+      - $.setAttr(podDefinition, $._podDefinition)
+
+  generateVolumeName:
+    Arguments:
+      - volume:
+          Contract: $.class(DockerVolume).notNull()
+    Body:
+      Return: format('{0}-{1}', $volume.name. $volume.id())
+  
+  buildVolumeEntry:
+    Arguments:
+      - volume:
+          Contract: $.class(DockerVolume).notNull()
+    Body:
+      - $type: $volume.getType()
+      - Value: $type
+        Match: 
+          HostDir:
+            - $spec:
+                hostDir:
+                  path: $volume.getParameters()
+          TempVolume:
+            - $spec:
+                emptyDir: {}
+        Default:
+          - Throw: UnknownDockerVolumeType
+            Message: format('Unknown docker volume type {0}', $type)
+      - Return:
+          name: $.generateVolumeName($volume)
+          source: $spec
+
+  getIp:
+    Body:
+      Return: $.kubernetesCluster.getIp()
+

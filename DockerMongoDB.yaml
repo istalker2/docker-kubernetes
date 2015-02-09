@@ -1,0 +1,44 @@
+Name: DockerMongoDB
+
+Extends: std:Application
+
+Properties:
+  name:
+    Contract: $.string().notNull()
+  host:
+    Contract: $.class(DockerContainerHost).notNull()
+  port:
+    Contract: $.int()
+  bindings:
+    Contract: {}
+    Usage: Out
+
+Workflow:
+  initialize:
+    Body:
+      - $._environment: $.find(std:Environment).require()
+
+  deploy:
+    Body:
+      - $._environment: $.find(std:Environment).require()
+      - If: not $.getAttr(deployed, false)
+        Then:
+          - $._environment.reporter.report($this, 'Checking for Docker Service availability')
+          - $.host.deploy()
+
+          - $._environment.reporter.report($this, 'Installing Application')
+          - $.bindings: $.host.hostContainer(
+                name => $.name,
+                image => mongo,
+                commands => null,
+                env => dict(),
+                ports => list($ports),
+                volumes => dict()
+              )
+          
+          - $port: str($.port)
+          - $._environment.reporter.report($this, 'Application MongoDB available at {0}:{1}'.format(
+                $.docker.publicIp,
+                $.bindings.get($port)
+              ))
+          - $.setAttr(deployed, true)

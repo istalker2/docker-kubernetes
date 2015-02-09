@@ -1,0 +1,11 @@
+Name: DockerTempVolume
+Extends: DockerVolume
+
+Methods:
+  getType:
+    Body:
+      Return: TempVolume
+
+  getParameters:
+    Body:
+      Return: null

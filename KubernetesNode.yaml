@@ -1,0 +1,10 @@
+Name: KubernetesNode
+
+Properties:
+  instance:
+    Contract: $.class(res:LinuxMuranoInstance).notNull()
+
+Methods:
+  getIp:
+    Body:
+      Return: $.instance.ipAddresses[0]

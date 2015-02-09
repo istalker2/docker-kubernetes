@@ -1,0 +1,53 @@
+# Standalone (single-VM) Docker server base on DockerInc::Docker::Container Heat resource
+
+Name: DockerStandaloneHost
+Extends: 
+  - DockerContainerHost
+
+Properties:  
+  name:
+    Contract: $.string().notNull()
+
+  instance:
+    Contract: $.class(res:LinuxMuranoInstance).notNull()
+
+  # other properties here
+
+
+Methods:
+  
+  #TODO Implement Me!
+  deploy:
+    Body:
+
+  #TODO Implement Me!
+  hostContainer:
+    Arguments:
+      - name:
+          Contract: $.string().notNull()
+      - image:
+          Contract: $.string().notNull()
+      - commands:
+          Contract: 
+            - $.string().notNull()
+      - env:
+          Contract:
+            $.string().notNull(): $.string().notNull()
+      - ports:
+          Contract: 
+            - $.int()
+      - volumes:
+          Contract:
+            $.string().notNull(): $.class(DockerVolume).notNull()
+
+  #TODO Implement Me!
+  deleteContainer:
+    Arguments:
+      - name:
+          Contract: $.string().notNull()
+    Body:
+
+  #TODO Implement Me!
+  getIp:
+    Body:
+  

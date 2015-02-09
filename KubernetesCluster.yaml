@@ -1,0 +1,30 @@
+Name: KubernetesCluster
+
+Extends: std:Application
+
+Properties:
+  masterNode:
+    Contract: $.class(res:Instance)
+    Usage: Out
+
+  minionNodes:
+    Contract:
+      - $.class(KubernetesNode).notNull()
+      
+Methods:
+  initialize:
+    Body:
+      - $._environment: $.find(std:Environment).require()
+
+  deploy:
+    Body:
+      - If: not $.getAttr(deployed, false)
+        Then:
+          - $._environment.reporter.report($this, 'Setting up Kubernetes cluster')
+          - $.masterNode.deploy()
+          - $.minionNodes.pselect($.deploy())
+          - $.setAttr(deployed, true)
+
+  getIp:
+    Body:
+      Return: $.masterNode.getIp()
