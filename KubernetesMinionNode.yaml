@@ -14,7 +14,6 @@ Methods:
           - $._environment.reporter.report($this, 'Creating Kubernetes Master')
           - $.super($.deploy())
           - $.setupNode()
-          - $.super()
           - $.setAttr(deployed, true)
 
   setupNode:
