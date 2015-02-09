@@ -33,7 +33,7 @@ Methods:
             ip => $.getIp(),
             clusterConfig => $.clusterConfig
           ))
-      - $.instance.agent.call($template, $resources)
+      - $._cluster.masterNode.instance.agent.call($template, $resources)
 
       - $._environment.reporter.report($, 'Setup Kubernetes Minion on {0}'.format($.instance.name))
       - $resources: new(sys:Resources)
@@ -48,4 +48,4 @@ Methods:
             name => $.instance.name,
             ip => $.getIp()
           ))
-      - $.instance.agent.call($template, $resources)
+      - $._cluster.masterNode.instance.agent.call($template, $resources)
