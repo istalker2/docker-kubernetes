@@ -2,32 +2,32 @@ Version: 2
 Templates:
   masterNode:
     ?:
-      type: io.murano.apps.docker.kubernates.MasterNode
-    instance:
-      ?:
-        type: io.murano.resources.LinuxMuranoInstance
-        name: generateHostname($.appConfiguration.unitNamingPattern, $index)
-        flavor: $.instanceConfiguration.flavor
-        image: $.instanceConfiguration.osImage
-        assignFloatingIp: $.appConfiguration.assignFloatingIP
-        keyname: $.instanceConfiguration.keyPair
-
-  minionNode:
-    ?:
-      type: io.murano.apps.docker.kubernates.MinionNode
+      type: io.murano.apps.docker.kubernetes.KubernetesMasterNode
     portalNet: $.appConfiguration.portalNet
     instance:
       ?:
         type: io.murano.resources.LinuxMuranoInstance
-        name: generateHostname($.appConfiguration.unitNamingPattern, $index + 1)
-        flavor: $.instanceConfiguration.flavor
-        image: $.instanceConfiguration.osImage
-        assignFloatingIp: $.appConfiguration.assignFloatingIP
-        keyname: $.instanceConfiguration.keyPair
+      name: generateHostname($.appConfiguration.unitNamingPattern, 1)
+      flavor: $.instanceConfiguration.flavor
+      image: $.instanceConfiguration.osImage
+      assignFloatingIp: $.appConfiguration.assignFloatingIP
+      keyname: $.instanceConfiguration.keyPair
+
+  minionNode:
+    ?:
+      type: io.murano.apps.docker.kubernetes.KubernetesMinionNode
+    instance:
+      ?:
+        type: io.murano.resources.LinuxMuranoInstance
+      name: generateHostname($.appConfiguration.unitNamingPattern, $index + 1)
+      flavor: $.instanceConfiguration.flavor
+      image: $.instanceConfiguration.osImage
+      assignFloatingIp: $.appConfiguration.assignFloatingIP
+      keyname: $.instanceConfiguration.keyPair
 
 Application:
   ?:
-    type: io.murano.apps.docker.kubernetes.Cluster
+    type: io.murano.apps.docker.kubernetes.KubernetesCluster
   name: $.appConfiguration.name
   masterNode: $masterNode
   minionNodes: repeat($minionNode, $.appConfiguration.minionCount)
@@ -39,7 +39,7 @@ Forms:
         - name: name
           type: string
           label: Application Name
-          initial: KubernetesCluster
+          initial: Kubernetes Cluster
           description: >-
             Enter a desired name for the application. Just A-Z, a-z, 0-9, dash and
             underline are allowed
