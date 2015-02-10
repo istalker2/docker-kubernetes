@@ -6,9 +6,9 @@ Description: |
  Kubernetes is an open source system for managing containerized applications across multiple hosts,
  providing basic mechanisms for deployment, maintenance, and scaling of applications.
 Author: 'Mirantis, Inc'
-Tags: [Database, Docker, Kubernetes]
+Tags: [Docker, Kubernetes]
 Classes:
- io.murano.apps.docker.Kubernetes.Cluster: KubernetesCluster.yaml
- io.murano.apps.docker.Kubernetes.MasterNode: KubernetesMasterNode.yaml
- io.murano.apps.docker.Kubernetes.MinionNode: KubernetesMinionNode.yaml
- io.murano.apps.docker.Kubernetes.Node: KubernetesNode.yaml
+ io.murano.apps.docker.kubernetes.Cluster: KubernetesCluster.yaml
+ io.murano.apps.docker.kubernetes.MasterNode: KubernetesMasterNode.yaml
+ io.murano.apps.docker.kubernetes.MinionNode: KubernetesMinionNode.yaml
+ io.murano.apps.docker.kubernetes.Node: KubernetesNode.yaml
