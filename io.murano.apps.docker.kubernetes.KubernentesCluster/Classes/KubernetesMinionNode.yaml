@@ -37,7 +37,7 @@ Methods:
       - $template: $resources.yaml('MemberEtcdSetup.template').bind(dict(
             name => $.instance.name,
             ip => $.getIp(),
-            clusterConfig => $.clusterConfig
+            clusterConfig => $clusterConfig
           ))
       - $.instance.agent.call($template, $resources)
 
