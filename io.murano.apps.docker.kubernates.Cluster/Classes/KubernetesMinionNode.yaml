@@ -31,7 +31,7 @@ Methods:
             name => $.instance.name,
             ip => $.getIp()
           ))
-      - $clusterConfig: $.instance.agent.call($template, $resources)
+      - $clusterConfig: $._cluster.masterNode.instance.agent.call($template, $resources)
 
       - $._environment.reporter.report($this, 'Setup Kubernetes API host')
       - $template: $resources.yaml('MemberEtcdSetup.template').bind(dict(
@@ -39,7 +39,7 @@ Methods:
             ip => $.getIp(),
             clusterConfig => $.clusterConfig
           ))
-      - $._cluster.masterNode.instance.agent.call($template, $resources)
+      - $.instance.agent.call($template, $resources)
 
       - $._environment.reporter.report($, 'Setup Kubernetes Minion on {0}'.format($.instance.name))
       - $resources: new(sys:Resources)
@@ -48,7 +48,7 @@ Methods:
             ip => $.getIp(),
             masterIp => $._cluster.masterNode.getIp()
           ))
-      - $clusterConfig: $.instance.agent.call($template, $resources)
+      - $.instance.agent.call($template, $resources)
 
       - $template: $resources.yaml('KubeRegisterNode.template').bind(dict(
             name => $.instance.name,
