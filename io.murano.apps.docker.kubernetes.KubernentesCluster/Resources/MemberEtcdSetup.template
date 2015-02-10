@@ -5,10 +5,10 @@ Name: Setup ETCD Member
 Parameters:
   name: $name
   ip: $ip
-  cluster_config: $clusterConfig
+  clusterConfig: $clusterConfig
 
 Body: |
-  return setup('{0} {1} {2}'.format(args.name, args.ip, args.cluster_config)).stdout
+  return setup('{0} {1} {2}'.format(args.name, args.ip, args.clusterConfig)).stdout
 Scripts:
   setup:
     Type: Application
