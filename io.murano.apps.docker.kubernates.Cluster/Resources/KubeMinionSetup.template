@@ -5,10 +5,10 @@ Name: Setup Kubernetes Minion
 Parameters:
   name: $name
   ip: $ip
-  masterIP: $masterIP
+  masterIp: $masterIp
 
 Body: |
-  return setup('{0} {1} {2}'.format(args.name, args.ip, args.masterIP)).stdout
+  return setup('{0} {1} {2}'.format(args.name, args.ip, args.masterIp)).stdout
 
 Scripts:
   setup:

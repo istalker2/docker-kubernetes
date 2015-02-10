@@ -2,7 +2,7 @@ Version: 2
 Templates:
   masterNode:
     ?:
-      type: io.murano.apps.docker.Kubernates.MasterNode
+      type: io.murano.apps.docker.kubernates.MasterNode
     instance:
       ?:
         type: io.murano.resources.LinuxMuranoInstance
@@ -14,7 +14,7 @@ Templates:
 
   minionNode:
     ?:
-      type: io.murano.apps.docker.Kubernates.MinionNode
+      type: io.murano.apps.docker.kubernates.MinionNode
     portalNet: $.appConfiguration.portalNet
     instance:
       ?:
@@ -27,11 +27,10 @@ Templates:
 
 Application:
   ?:
-    type: io.murano.apps.docker.Kubernetes.Cluster
+    type: io.murano.apps.docker.kubernetes.Cluster
   name: $.appConfiguration.name
   masterNode: $masterNode
-  minionNodes: repeat($minionNode, $.appConfiguration.initialCount)
-  initialCount: $.appConfiguration.initialCount
+  minionNodes: repeat($minionNode, $.appConfiguration.minionCount)
 
 
 Forms:
@@ -44,13 +43,13 @@ Forms:
           description: >-
             Enter a desired name for the application. Just A-Z, a-z, 0-9, dash and
             underline are allowed
-        - name: initialCount
+        - name: minionCount
           type: integer
-          label: Initial Count
+          label: Minion Count
           initial: 3
           required: true
           description: >-
-            Initial number of cluster instances
+            Select number of minions
         - name: portalNet
           type: string
           initial: '11.1.1.1/24'
