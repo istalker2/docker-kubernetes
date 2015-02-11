@@ -1,5 +1,6 @@
 Namespaces:
   =: io.murano.apps.docker.kubernetes
+  doc: io.murano.apps.docker
   std: io.murano
   res: io.murano.resources
   sys: io.murano.system
@@ -7,8 +8,8 @@ Namespaces:
 Name: KubernetesPod
 
 Extends: 
-  - DockerContainerHost
-  - DockerHelpers
+  - doc:DockerContainerHost
+  - doc:DockerHelpers
 
 Properties:
   name:
