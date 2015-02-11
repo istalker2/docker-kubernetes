@@ -2,7 +2,7 @@ Version: 2
 
 Application:
   ?:
-    type: io.murano.apps.docker.kubernetes.KubernetesPOD
+    type: io.murano.apps.docker.kubernetes.KubernetesPod
   name: $.appConfiguration.name
   labels: $.appConfiguration.labels
   kubernetesCluster: $.appConfiguration.kubernetesCluster
