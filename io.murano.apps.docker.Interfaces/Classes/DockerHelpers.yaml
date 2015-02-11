@@ -11,7 +11,7 @@ Methods:
     Body:
       - $result: {}
       - For: t
-        In: $labelsString.split(';')
+        In: $labelsString.replace(',', ';').split(';')
         Do:
           - $pair: $t.split('=')
           - $key: $pair[0].trim()
