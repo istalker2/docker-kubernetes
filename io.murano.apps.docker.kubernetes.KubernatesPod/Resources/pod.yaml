@@ -1,0 +1,11 @@
+id: $id
+kind: Pod
+apiVersion: v1beta1
+desiredState:
+  manifest:
+    version: v1beta1
+    id: $id
+    containers:
+
+labels:
+  name: $name

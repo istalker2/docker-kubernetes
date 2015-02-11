@@ -1,0 +1,23 @@
+FormatVersion: 2.0.0
+Version: 1.0.0
+Name: Update POD
+
+Parameters:
+  podDefinition: $podDefinition
+  isNew: $isNew
+
+Body: |
+  import json
+  with open('/tmp/pod.json', 'w') as f:
+    json.dump(args.podDefinition, f)
+  return updatePOD('{0}'.format(args.isNew)).stdout
+
+Scripts:
+  updatePOD:
+    Type: Application
+    Version: 1.0.0
+    EntryPoint: updatePOD.sh
+    Files: []
+    Options:
+      captureStdout: true
+      captureStderr: true

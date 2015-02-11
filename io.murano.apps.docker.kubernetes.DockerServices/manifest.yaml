@@ -5,7 +5,7 @@ Name: Docker Services Library
 Description: |
  TODO
 Author: 'Mirantis, Inc'
-Tags: [Docker, Kubernates]
+Tags: [Docker, Kubernetes]
 Classes:
  io.murano.apps.docker.kubernetes.DockerContainerHost: DockerContainerHost.yaml
  io.murano.apps.docker.kubernetes.DockerHelpers: DockerHelpers.yaml
