@@ -1,3 +1,6 @@
+Namespaces:
+  =: io.murano.apps.docker
+
 Name: DockerMongoDB
 
 Extends: std:Application
@@ -33,3 +36,4 @@ Methods:
           
           - $._environment.reporter.report($this, 'Application MongoDB available at {0}:{1}'.format($.host.getIp(), $.port))
           - $.setAttr(deployed, true)
+

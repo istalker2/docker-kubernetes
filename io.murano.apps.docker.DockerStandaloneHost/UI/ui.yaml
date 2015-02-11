@@ -2,7 +2,7 @@ Version: 2
 
 Application:
   ?:
-    type: io.murano.apps.docker.kubernetes.DockerStandaloneHost
+    type: io.murano.apps.docker.DockerStandaloneHost
   name: $.appConfiguration.name
   instance:
     ?:

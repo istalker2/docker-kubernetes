@@ -2,7 +2,7 @@ Version: 2
 
 Application:
   ?:
-    type: io.murano.apps.docker.DockerHTTPd
+    type: io.murano.apps.docker.DockerMongoDB
   name: $.appConfiguration.name
   host: $.appConfiguration.host 
   port: $.appConfiguration.port
@@ -19,7 +19,7 @@ Forms:
             Enter a desired name for the application. Just A-Z, a-z, 0-9, dash and
             underline are allowed
         - name: host
-          type: io.murano.apps.docker.kubernetes.DockerContainerHost
+          type: io.murano.apps.docker.DockerContainerHost
           label: Container Host
           description: >-
             Select an instance of Docker contaniner to run the app

@@ -1,16 +1,28 @@
+# Standalone (single-VM) Docker server base on DockerInc::Docker::Container Heat resource
 Namespaces:
-  =: io.murano.apps.docker.kubernetes
-  std: io.murano
+  =: io.murano.apps.docker
 
-Name: DockerContainerHost
+Name: DockerStandaloneHost
+Extends: 
+  - DockerContainerHost
 
-Extends: std:Application
-
-Properties:
+Properties:  
   name:
     Contract: $.string().notNull()
 
+  instance:
+    Contract: $.class(res:LinuxMuranoInstance).notNull()
+
+  # other properties here
+
+
 Methods:
+  
+  #TODO Implement Me!
+  deploy:
+    Body:
+
+  #TODO Implement Me!
   hostContainer:
     Arguments:
       - name:
@@ -30,10 +42,14 @@ Methods:
           Contract:
             $.string().notNull(): $.class(DockerVolume).notNull()
 
+  #TODO Implement Me!
   deleteContainer:
     Arguments:
       - name:
           Contract: $.string().notNull()
+    Body:
 
+  #TODO Implement Me!
   getIp:
+    Body:
   
