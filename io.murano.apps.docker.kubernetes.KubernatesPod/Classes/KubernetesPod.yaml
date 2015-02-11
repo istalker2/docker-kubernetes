@@ -106,9 +106,8 @@ Methods:
       - $isNew: $.getAttr(lastPodDeployId, null) = null
       - $resources: new(sys:Resources)
       
-      #TODO: write UpdateService.template that is exactly the same as UpdatePod.template with just a parameter name changed
       - $template: $resources.yaml('UpdateService.template').bind(dict(
-            serviceDefinition => $._podDefinition,
+            serviceDefinition => $definition,
             isNew => $isNew
           ))
       - $.kubernetesCluster.masterNode.instance.agent.call($template, $resources)
@@ -121,7 +120,6 @@ Methods:
       - $id: $.getServiceId($servicePort)
       - $resources: new(sys:Resources)
       
-      #TODO: write DestroyService.template that calls "kubectl delete service $id"
       - $template: $resources.yaml('DestroyService.template').bind(dict(serviceId => $id))
       - $.kubernetesCluster.masterNode.instance.agent.call($template, $resources)
 
@@ -131,7 +129,6 @@ Methods:
       - $isNew: $.getAttr(replicationFactor, 0) = 0
       - $resources: new(sys:Resources)
       
-      #TODO: write UpdateReplicationController.template that is exactly the same as UpdatePod.template with just a parameter name changed
       - $template: $resources.yaml('UpdateReplicationController.template').bind(dict(
             controllerDefinition => $definition,
             isNew => $isNew
@@ -143,7 +140,6 @@ Methods:
       - $id: $.getReplicationControllerId()
       - $resources: new(sys:Resources)
       
-      #TODO: write DestroyReplicationController.template that calls "kubectl delete rc $id" (not 100% sure for "rc")
       - $template: $resources.yaml('DestroyReplicationController.template').bind(dict(serviceId => $id))
       - $.kubernetesCluster.masterNode.instance.agent.call($template, $resources)
 
