@@ -1,5 +1,5 @@
 Namespaces:
-  =: io.murano.apps.docker.kubernetes
+  =: io.murano.apps.docker
 
 Name: DockerHelpers
 
