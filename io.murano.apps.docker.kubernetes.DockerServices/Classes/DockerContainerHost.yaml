@@ -1,4 +1,9 @@
+Namespaces:
+  =: io.murano.apps.docker.kubernetes
+  std: io.murano
+
 Name: DockerContainerHost
+
 Extends: std:Application
 
 Properties:

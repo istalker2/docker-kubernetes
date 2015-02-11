@@ -1,4 +1,8 @@
+Namespaces:
+  =: io.murano.apps.docker.kubernetes
+
 Name: DockerHostVolume
+
 Extends: DockerVolume
 
 Properties:

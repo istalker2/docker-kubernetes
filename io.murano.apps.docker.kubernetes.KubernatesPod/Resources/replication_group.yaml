@@ -1,0 +1,17 @@
+apiVersion: "v1beta1"
+kind: "ReplicationController"
+id: $id
+desiredState:
+    replicas: $replicas
+    replicaSelector:
+      name: $replica_selector
+    podTemplate:
+       desiredState:
+         manifest:
+           version: "v1beta1"
+           id: $id
+           containers:
+       labels:
+         name: $name
+labels:
+  name: $name
