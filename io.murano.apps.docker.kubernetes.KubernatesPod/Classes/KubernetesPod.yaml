@@ -187,14 +187,14 @@ Methods:
 
   getReplicationControllerId:
     Body:
-      - Return: toLower(format('replication-controller-{0}', $.id()))
+      - Return: toLower(format('rc-{0}', $.getPodName()))
 
   getServiceId:
     Arguments:
       - servicePort:
           Contract: $.int().notNull()
     Body:
-      - Return: toLower(format('service-{0}-{1}', $servicePort, $.id()))
+      - Return: toLower(format('svc-{0}-{1}', $servicePort, $.getPodName()))
 
   buildServiceDefinition:
     Arguments:
@@ -289,7 +289,7 @@ Methods:
       - volume:
           Contract: $.class(doc:DockerVolume).notNull()
     Body:
-      Return: toLower(format('{0}-{1}', $volume.name. $volume.id()))
+      Return: toLower($volume.name)
   
   buildVolumeEntry:
     Arguments:
