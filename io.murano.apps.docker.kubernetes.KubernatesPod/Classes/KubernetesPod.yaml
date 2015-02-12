@@ -51,9 +51,9 @@ Methods:
                 manifest:
                   version: v1beta1
                   id: $podName
-                containers: []
-                volumes: []
-              labels: $.getPodLabels()
+                  containers: []
+                  volumes: []
+              labels: $.getPodLabels($podName)
                 
           - $.setAttr(podDefinition, $podDefinition)
       - $._podDefinition: $podDefinition
@@ -91,9 +91,13 @@ Methods:
         In: $.exposePortsMap
         Do:
           - $previousMapping: $previouslyExposedPorts.get($mapping)
-          - If: $previousMapping != $.exposePortsMap.get(mapping)
-            Then: $.deployService(servicePort => $mapping, containerPort => $.exposePortsMap.get(mapping), 
-                isNew => $previousMapping = null)
+          - If: $previousMapping != $.exposePortsMap.get($mapping)
+            Then:
+              - $.deployService(
+                    servicePort => $mapping,
+                    containerPort => $.exposePortsMap.get($mapping),
+                    isNew => $previousMapping = null
+                  )
       - $.setAttr(exposedPorts, $.exposePortsMap)
 
       - $previousReplicationFactor: $.getAttr(replicationFactor, 0)
@@ -123,7 +127,7 @@ Methods:
       - isNew:
           Contract: $.bool().notNull()
     Body:
-      - $definition: $.buildServiceDefinition(servicePort => $servicePort, containerPort => containerPort)
+      - $definition: $.buildServiceDefinition(servicePort => $servicePort, containerPort => $containerPort)
       - $isNew: $.getAttr(lastPodDeployId, null) = null
       - $resources: new(sys:Resources)
       
@@ -174,6 +178,9 @@ Methods:
       - Return: $name
 
   getPodLabels:
+    Arguments:
+      - podName:
+          Contract: $.string().notNull()
     Body:
       Return: $.labels2Map($.labels).mergeWith(dict(id => $podName))
 
@@ -248,7 +255,7 @@ Methods:
             $.string().notNull(): $.string().notNull()
       - ports:
           Contract: 
-            - $.int()
+            - $.int().notNull()
       - volumes:
           Contract:
             $.string().notNull(): $.class(doc:DockerVolume).notNull()
@@ -269,7 +276,7 @@ Methods:
       - $diff:
           desiredState:
             manifest:
-              containers: $container
+              containers: [$container]
               volumes: $newVolumes
       
       - $.setAttr(lastPodChangeId, randomName())

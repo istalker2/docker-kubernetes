@@ -28,9 +28,9 @@ Methods:
           - $.host.hostContainer(
                 name => $.name,
                 image => mongo,
-                commands => null,
+                commands => list(),
                 env => dict(),
-                ports => list($ports),
+                ports => list($.port),
                 volumes => dict()
               )
           - $.host.deploy()

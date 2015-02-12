@@ -25,7 +25,7 @@ Methods:
             $.string().notNull(): $.string().notNull()
       - ports:
           Contract: 
-            - $.int()
+            - $.int().notNull()
       - volumes:
           Contract:
             $.string().notNull(): $.class(DockerVolume).notNull()
