@@ -19,6 +19,7 @@ Properties:
 
   labels:
     Contract: $.string().notNull()  # convert to key-value map as soon as it will be possible to input it in UI
+    Default: ''
 
   replicationFactor:
     Contract: $.int().notNull()
@@ -173,7 +174,7 @@ Methods:
       - $name: $.getAttr(podName, null)
       - If: $name = null
         Then:
-          - $name: format('Pod-{0}', randomName())
+          - $name: toLower(format('pod-{0}', randomName()))
           - $.setAttr(podName, $name)
       - Return: $name
 
@@ -182,18 +183,18 @@ Methods:
       - podName:
           Contract: $.string().notNull()
     Body:
-      Return: $.labels2Map($.labels).mergeWith(dict(id => $podName))
+      Return: $.labels2Map(toLower($.labels)).mergeWith(dict(id => $podName))
 
   getReplicationControllerId:
     Body:
-      - Return: format('ReplicationController-{0}', $.id())
+      - Return: toLower(format('replication-controller-{0}', $.id()))
 
   getServiceId:
     Arguments:
       - servicePort:
           Contract: $.int().notNull()
     Body:
-      - Return: format('Service-{0}-{1}', $servicePort, $.id())
+      - Return: toLower(format('service-{0}-{1}', $servicePort, $.id()))
 
   buildServiceDefinition:
     Arguments:
@@ -262,7 +263,7 @@ Methods:
     Body:
       - $.deleteContainer($name)
       - $container:
-          name: $name
+          name: toLower($name)
           image: $image
           command: $commands
           cpu: 1000
@@ -288,7 +289,7 @@ Methods:
       - volume:
           Contract: $.class(doc:DockerVolume).notNull()
     Body:
-      Return: format('{0}-{1}', $volume.name. $volume.id())
+      Return: toLower(format('{0}-{1}', $volume.name. $volume.id()))
   
   buildVolumeEntry:
     Arguments:
