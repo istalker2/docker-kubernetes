@@ -187,14 +187,14 @@ Methods:
 
   getReplicationControllerId:
     Body:
-      - Return: toLower(format('rc-{0}', $.getPodName()))
+      - Return: $.getPodName().replace('pod-', 'rc-')
 
   getServiceId:
     Arguments:
       - servicePort:
           Contract: $.int().notNull()
     Body:
-      - Return: toLower(format('svc-{0}-{1}', $servicePort, $.getPodName()))
+      - Return: $.getPodName().replace('pod-', format('svc-{0}-', $servicePort))
 
   buildServiceDefinition:
     Arguments:
