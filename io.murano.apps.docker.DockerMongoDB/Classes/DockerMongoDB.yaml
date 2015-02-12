@@ -1,5 +1,6 @@
 Namespaces:
   =: io.murano.apps.docker
+  std: io.murano
 
 Name: DockerMongoDB
 
