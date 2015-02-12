@@ -129,7 +129,6 @@ Methods:
           Contract: $.bool().notNull()
     Body:
       - $definition: $.buildServiceDefinition(servicePort => $servicePort, containerPort => $containerPort)
-      - $isNew: $.getAttr(lastPodDeployId, null) = null
       - $resources: new(sys:Resources)
       
       - $template: $resources.yaml('UpdateService.template').bind(dict(
@@ -181,6 +180,7 @@ Methods:
   getPodLabels:
     Arguments:
       - podName:
+          Contract: $.string().notNull()
           Contract: $.string().notNull()
     Body:
       Return: $.labels2Map(toLower($.labels)).mergeWith(dict(id => $podName))
