@@ -2,7 +2,6 @@ Namespaces:
   =: io.murano.apps.docker.kubernetes
   doc: io.murano.apps.docker
   std: io.murano
-  res: io.murano.resources
   sys: io.murano.system
 
 Name: KubernetesPod
@@ -85,7 +84,7 @@ Methods:
 
       - $previouslyExposedPorts: $.getAttr(exposedPorts, dict())
       - For: mapping
-        In: $.previouslyExposedPorts.where(not $ in $this.exposePortsMap)
+        In: $previouslyExposedPorts.where(not $ in $this.exposePortsMap)
         Do: $.destroyService(servicePort => $mapping)
 
       - For: mapping
@@ -118,9 +117,9 @@ Methods:
   deployService:
     Arguments:
       - servicePort:
-          Contract: $int().notNull()
+          Contract: $.int().notNull()
       - containerPort:
-          Contract: $int().notNull()
+          Contract: $.int().notNull()
       - isNew:
           Contract: $.bool().notNull()
     Body:
@@ -137,7 +136,7 @@ Methods:
   destroyService:
     Arguments:
       - servicePort:
-          Contract: $int().notNull()
+          Contract: $.int().notNull()
     Body:
       - $id: $.getServiceId($servicePort)
       - $resources: new(sys:Resources)
@@ -185,15 +184,16 @@ Methods:
   getServiceId:
     Arguments:
       - servicePort:
+          Contract: $.int().notNull()
     Body:
       - Return: format('Service-{0}-{1}', $servicePort, $.id())
 
   buildServiceDefinition:
     Arguments:
       - servicePort:
-          Contract: $int().notNull()
+          Contract: $.int().notNull()
       - containerPort:
-          Contract: $int().notNull()
+          Contract: $.int().notNull()
     Body:
       - Return:
           id: $.getServiceId($servicePort)
@@ -251,7 +251,7 @@ Methods:
             - $.int()
       - volumes:
           Contract:
-            $.string().notNull(): $.class(DockerVolume).notNull()
+            $.string().notNull(): $.class(doc:DockerVolume).notNull()
     Body:
       - $.deleteContainer($name)
       - $container:
@@ -279,14 +279,14 @@ Methods:
   generateVolumeName:
     Arguments:
       - volume:
-          Contract: $.class(DockerVolume).notNull()
+          Contract: $.class(doc:DockerVolume).notNull()
     Body:
       Return: format('{0}-{1}', $volume.name. $volume.id())
   
   buildVolumeEntry:
     Arguments:
       - volume:
-          Contract: $.class(DockerVolume).notNull()
+          Contract: $.class(doc:DockerVolume).notNull()
     Body:
       - $type: $volume.getType()
       - Value: $type

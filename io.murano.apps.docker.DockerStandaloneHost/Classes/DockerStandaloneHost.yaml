@@ -1,6 +1,7 @@
 # Standalone (single-VM) Docker server base on DockerInc::Docker::Container Heat resource
 Namespaces:
   =: io.murano.apps.docker
+  res: io.murano.resources
 
 Name: DockerStandaloneHost
 Extends: 
