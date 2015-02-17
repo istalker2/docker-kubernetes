@@ -262,12 +262,23 @@ Methods:
             $.string().notNull(): $.class(doc:DockerVolume).notNull()
     Body:
       - $.deleteContainer($name)
+      
+      - For: port
+        In: $ports
+        Do:
+          - $securityGroupIngress:
+              - ToPort: $port
+                FromPort: $port
+                IpProtocol: tcp
+                External: true
+          - $._environment.securityGroupManager.addGroupIngress($securityGroupIngress)
+
       - $container:
           name: toLower($name)
           image: $image
           command: $commands
           cpu: 1000
-          ports: $ports.select(dict(containerPort => $))
+          ports: $ports.select(dict(containerPort => $, hostPort => $))
           volumeMounts: $volumes.select(dict(name => $this.generateVolumeName($env.get($)), mountPath => $))
           env: $env.select(dict(key => $, value => $env.get($)))
       
