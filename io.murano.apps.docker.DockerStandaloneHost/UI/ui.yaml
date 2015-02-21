@@ -12,6 +12,7 @@ Application:
     image: $.instanceConfiguration.osImage
     keyname: $.instanceConfiguration.keyPair
     assignFloatingIp: $.appConfiguration.assignFloatingIP
+    availabilityZone: $.instanceConfiguration.availabilityZone
 
 Forms:
   - appConfiguration:
