@@ -12,6 +12,7 @@ Templates:
       image: $.instanceConfiguration.osImage
       assignFloatingIp: $.appConfiguration.assignFloatingIP
       keyname: $.instanceConfiguration.keyPair
+      availabilityZone: $.instanceConfiguration.availabilityZone
 
   minionNode:
     ?:

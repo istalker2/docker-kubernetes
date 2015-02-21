@@ -129,7 +129,6 @@ Methods:
           Contract: $.bool().notNull()
     Body:
       - $definition: $.buildServiceDefinition(servicePort => $servicePort, containerPort => $containerPort)
-      - $isNew: $.getAttr(lastPodDeployId, null) = null
       - $resources: new(sys:Resources)
       
       - $template: $resources.yaml('UpdateService.template').bind(dict(
@@ -182,19 +181,20 @@ Methods:
     Arguments:
       - podName:
           Contract: $.string().notNull()
+          Contract: $.string().notNull()
     Body:
       Return: $.labels2Map(toLower($.labels)).mergeWith(dict(id => $podName))
 
   getReplicationControllerId:
     Body:
-      - Return: toLower(format('replication-controller-{0}', $.id()))
+      - Return: $.getPodName().replace('pod-', 'rc-')
 
   getServiceId:
     Arguments:
       - servicePort:
           Contract: $.int().notNull()
     Body:
-      - Return: toLower(format('service-{0}-{1}', $servicePort, $.id()))
+      - Return: $.getPodName().replace('pod-', format('svc-{0}-', $servicePort))
 
   buildServiceDefinition:
     Arguments:
@@ -289,7 +289,7 @@ Methods:
       - volume:
           Contract: $.class(doc:DockerVolume).notNull()
     Body:
-      Return: toLower(format('{0}-{1}', $volume.name. $volume.id()))
+      Return: toLower($volume.name)
   
   buildVolumeEntry:
     Arguments:
