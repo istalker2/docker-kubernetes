@@ -73,12 +73,11 @@ Forms:
              Select to true to assign floating IP automatically
           initial: false
           required: false
-          widgetMedia:
-            css: {all: ['muranodashboard/css/checkbox.css']}
         - name: unitNamingPattern
           type: string
           initial: 'kube-0#'
           required: false
+          regexpValidator: '^(([a-zA-Z0-9#][a-zA-Z0-9-#]*[a-zA-Z0-9#])\.)*([A-Za-z0-9#]|[A-Za-z0-9#][A-Za-z0-9-#]*[A-Za-z0-9#])$'
           label: Hostname
           widgetMedia:
             js: ['muranodashboard/js/support_placeholder.js']
