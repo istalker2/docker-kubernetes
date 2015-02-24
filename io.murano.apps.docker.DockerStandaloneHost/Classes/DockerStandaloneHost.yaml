@@ -6,7 +6,6 @@ Name: DockerStandaloneHost
 
 Extends: 
   - DockerContainerHost
-  - DockerServer
 
 Properties:  
   name:
@@ -31,7 +30,6 @@ Methods:
       - $._environment: $.find(std:Environment).require()  
   
 
-  #TODO Implement Me!
   deploy:
     Body:
       - If: not $.getAttr(deployed, false)
@@ -92,7 +90,6 @@ Methods:
       - $._environment.stack.updateTemplate($template)
       - $._environment.stack.push()
 
-  #TODO Implement Me!
   hostContainer:
     Arguments:
       - name:
@@ -170,14 +167,12 @@ Methods:
       - $.lastPort: $.lastPort + 1
       - Return: $.lastPort
 
-  #TODO Implement Me!
   deleteContainer:
     Arguments:
       - name:
           Contract: $.string().notNull()
     Body:
 
-  #TODO Implement Me!
   getIp:
     Body:
-
+      - Return: $.instance.ipAddresses[0]
