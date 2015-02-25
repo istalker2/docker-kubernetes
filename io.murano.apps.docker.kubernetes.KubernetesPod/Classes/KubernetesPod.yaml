@@ -262,6 +262,17 @@ Methods:
             $.string().notNull(): $.class(doc:DockerVolume).notNull()
     Body:
       - $.deleteContainer($name)
+      
+      - For: port
+        In: $ports
+        Do:
+          - $securityGroupIngress:
+              - ToPort: $port
+                FromPort: $port
+                IpProtocol: tcp
+                External: true
+          - $._environment.securityGroupManager.addGroupIngress($securityGroupIngress)
+
       - $container:
           name: toLower($name)
           image: $image
