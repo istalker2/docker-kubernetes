@@ -1,0 +1,35 @@
+Namespaces:
+  =: io.murano.apps.docker
+  kube: io.murano.apps.docker.kubernetes.static
+  std: io.murano
+
+Name: DockerHeapster
+
+Extends: std:Application
+
+Properties:
+  name:
+    Contract: $.string().notNull()
+  influxdb:
+    Contract: $.class(DockerInfluxDB).notNull()
+  heapsterRC:
+    Contract: $.class(kube:DockerInfluxDB).notNull()
+
+
+Methods:
+  initialize:
+    Body:
+      - $._environment: $.find(std:Environment).require()
+
+  deploy:
+    Body:
+      - If: not $.getAttr(deployed, false)
+        Then:
+          - $._environment.reporter.report($this, 'Starting deployment')
+          - $._environment.reporter.report($this, 'Installing Database service')            
+          - $.influxdb.deploy()
+          - $._environment.reporter.report($this, 'Installing Heapster app')
+          - $.heapsterRC.deploy()
+          - $._environment.reporter.report($this, 'Heapster is ready')
+          - $.setAttr(deployed, true)
+

@@ -1,0 +1,55 @@
+Namespaces:
+  =: io.murano.apps.docker
+  std: io.murano
+
+Name: DockerCAdvisor
+
+Extends: std:Application
+
+Properties:
+  name:
+    Contract: $.string().notNull()
+  host:
+    Contract: $.class(DockerContainerHost).notNull()
+  port:
+    Contract: $.int().check($ > 0 and $ < 65536)
+
+
+Methods:
+  initialize:
+    Body:
+      - $._environment: $.find(std:Environment).require()
+
+  deploy:
+    Body:
+      - If: not $.getAttr(deployed, false)
+        Then:
+          - $._environment.reporter.report($this, 'Installing Application')
+          
+          - $volumes:
+              - name: varrun
+                source:
+                  hostDir:
+                    path: '/var/run'
+              - name: varlibdocker
+                source:
+                  hostDir:
+                    path: '/var/lib/docker'
+              - name: sysfs
+                source:
+                  hostDir:
+                    path: '/sys'
+
+          - $.host.hostContainer(
+                name => $.name,
+                image => 'google/cadvisor:0.8.0',
+                commands => list(),
+                env => dict(),
+                ports => list($.port),
+                volumes => $volumes
+              )
+          - $.host.deploy()
+          
+          - $._environment.reporter.report($this, 'cAdvisor installed')
+          - $.setAttr(deployed, true)
+

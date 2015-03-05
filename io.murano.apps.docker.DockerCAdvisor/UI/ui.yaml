@@ -1,0 +1,34 @@
+Version: 2
+
+Application:
+  ?:
+    type: io.murano.apps.docker.DockerCAdvisor
+  name: $.appConfiguration.name
+  host: $.appConfiguration.host 
+  port: $.appConfiguration.port
+
+
+Forms:
+  - appConfiguration:
+      fields:
+        - name: name
+          type: string
+          label: Application Name
+          initial: 'Google cAdvisor'
+          description: >-
+            Enter a desired name for the application. Just A-Z, a-z, 0-9, dash and
+            underline are allowed
+        - name: host
+          type: io.murano.apps.docker.kubernetes.KubernetesPod
+          label: Container Host
+          description: >-
+            Select an instance of Docker contaniner to run the app
+        - name: port
+          type: integer
+          label: Port
+          minValue: 1
+          maxValue: 65535
+          initial: 4194
+          description: >-
+            Select a port to run the app
+
