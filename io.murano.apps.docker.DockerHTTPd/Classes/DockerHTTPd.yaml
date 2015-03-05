@@ -2,7 +2,7 @@ Namespaces:
   =: io.murano.apps.docker
   std: io.murano
 
-Name: DockerNginx
+Name: DockerHTTPd
 
 Extends: std:Application
 
@@ -12,7 +12,7 @@ Properties:
   host:
     Contract: $.class(DockerContainerHost).notNull()
   port:
-    Contract: $.int()
+    Contract: $.int().check($ > 0 and $ < 65536)
 
 
 Methods:
@@ -35,6 +35,6 @@ Methods:
               )
           - $.host.deploy()
           
-          - $._environment.reporter.report($this, 'Application Ngix available at {0}:{1}'.format($.host.getIp(), $.port))
+          - $._environment.reporter.report($this, 'Application HTTPd available at {0}:{1}'.format($.host.getIp(), $.port))
           - $.setAttr(deployed, true)
 
