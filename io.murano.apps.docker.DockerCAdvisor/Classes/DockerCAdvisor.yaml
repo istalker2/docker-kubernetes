@@ -2,7 +2,7 @@ Namespaces:
   =: io.murano.apps.docker
   std: io.murano
 
-Name: DockerMongoDB
+Name: DockerCAdvisor
 
 Extends: std:Application
 
@@ -25,16 +25,31 @@ Methods:
       - If: not $.getAttr(deployed, false)
         Then:
           - $._environment.reporter.report($this, 'Installing Application')
+          
+          - $volumes:
+              - name: varrun
+                source:
+                  hostDir:
+                    path: '/var/run'
+              - name: varlibdocker
+                source:
+                  hostDir:
+                    path: '/var/lib/docker'
+              - name: sysfs
+                source:
+                  hostDir:
+                    path: '/sys'
+
           - $.host.hostContainer(
                 name => $.name,
-                image => mongo,
+                image => 'google/cadvisor:0.8.0',
                 commands => list(),
                 env => dict(),
                 ports => list($.port),
-                volumes => dict()
+                volumes => $volumes
               )
           - $.host.deploy()
           
-          - $._environment.reporter.report($this, 'Application MongoDB available at {0}:{1}'.format($.host.getIp(), $.port))
+          - $._environment.reporter.report($this, 'cAdvisor installed')
           - $.setAttr(deployed, true)
 

@@ -2,7 +2,7 @@ Version: 2
 
 Application:
   ?:
-    type: io.murano.apps.docker.DockerMongoDB
+    type: io.murano.apps.docker.DockerHTTPd
   name: $.appConfiguration.name
   host: $.appConfiguration.host 
   port: $.appConfiguration.port
@@ -14,7 +14,7 @@ Forms:
         - name: name
           type: string
           label: Application Name
-          initial: 'DockerMongoDB'
+          initial: 'DockerHTTPd'
           description: >-
             Enter a desired name for the application. Just A-Z, a-z, 0-9, dash and
             underline are allowed
@@ -28,7 +28,7 @@ Forms:
           label: Port
           minValue: 1
           maxValue: 65535
-          initial: 27017
+          initial: 80
           description: >-
             Select a port to run the app
 

@@ -1,0 +1,10 @@
+Format: 1.0
+Type: Application
+FullName: io.murano.apps.docker.DockerHeapster
+Name: Docker Heapster
+Description: |
+ This application deploys Google Heapster service in a Kubernetes environment. 
+Author: 'Mirantis, Inc'
+Tags: [docker, application, heapster]
+Classes:
+ io.murano.apps.docker.DockerHeapster: DockerHeapster.yaml

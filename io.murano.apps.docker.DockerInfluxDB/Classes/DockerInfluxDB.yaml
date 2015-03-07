@@ -1,0 +1,33 @@
+Namespaces:
+  =: io.murano.apps.docker
+  kube: io.murano.apps.docker.kubernetes.static
+  std: io.murano
+
+Name: DockerInfluxDB
+
+Extends: std:Application
+
+Properties:
+  name:
+    Contract: $.string().notNull()
+  influxdbRC:
+    Contract: $.class(kube:ReplicationController).notNull()
+  influxdbService:
+    Contract: $.class(kube:Service).notNull()
+
+
+Methods:
+  initialize:
+    Body:
+      - $._environment: $.find(std:Environment).require()
+
+  deploy:
+    Body:
+      - If: not $.getAttr(deployed, false)
+        Then:
+          - $._environment.reporter.report($this, 'Installing Application')
+          - $.influxdbRC.deploy()
+          - $.influxdbService.deploy()
+          - $._environment.reporter.report($this, 'Application InfluxDB is ready')
+          - $.setAttr(deployed, true)
+

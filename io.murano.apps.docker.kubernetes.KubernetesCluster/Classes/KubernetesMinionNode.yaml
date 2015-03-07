@@ -58,8 +58,12 @@ Methods:
 
   removeFromCluster:
     Body:
-      #TODO implement me!!!!!!!!!!!
       - If: $.getAttr(deployed, false)
-      	Then:
-          # - code here
-	      - $.setAttr(deployed, false)
+        Then:
+          - $._environment.reporter.report($this, 'Deleting Kubernetes Minion')
+          - $resources: new(sys:Resources)
+          - $template: $resources.yaml('RemoveMinion.template').bind(dict(name=>$.getIp()))
+          - $._cluster.masterNode.instance.agent.call($template, $resources)
+          - $._environment.reporter.report($this, 'Node {0} deleted'.format($.getIp()))
+          - $.setAttr(deployed, false)
+
